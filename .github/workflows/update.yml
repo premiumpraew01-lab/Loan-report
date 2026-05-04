@@ -1,0 +1,33 @@
+name: Auto Update Loan Report
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 21 * * *'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install pandas
+
+    - name: Run Report Generator
+      run: |
+        python report.py
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: .
+        branch: gh-pages
