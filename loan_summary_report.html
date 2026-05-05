@@ -7,161 +7,300 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Sarabun','Segoe UI',sans-serif;background:#eef0f5;color:#1e293b;font-size:14px}
-.topbar{background:linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 100%);color:#fff;padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center}
-.topbar h1{font-size:20px;font-weight:600;letter-spacing:.3px}
+.topbar{background:linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 100%);color:#fff;padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem}
+.topbar h1{font-size:20px;font-weight:600}
 .page{max-width:1400px;margin:0 auto;padding:1.2rem 1.5rem}
 .card{background:#fff;border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.card-title{font-size:14px;font-weight:700;color:#1e3a8a;border-bottom:2px solid #e0e7ff;padding-bottom:.55rem;margin-bottom:1rem;display:flex;align-items:center;gap:8px;justify-content:space-between}
+.card-title{font-size:14px;font-weight:700;color:#1e3a8a;border-bottom:2px solid #e0e7ff;padding-bottom:.55rem;margin-bottom:1rem;display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
 .kpi{background:#f8faff;border:1px solid #e0e7ff;border-radius:10px;padding:.9rem 1rem}
 .kpi-label{font-size:11px;color:#64748b;margin-bottom:5px}
 .kpi-value{font-size:21px;font-weight:700}
-.chart-wrap{position:relative;width:100%}.ch240{height:240px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.g2b{display:grid;grid-template-columns:1fr 1.5fr;gap:1.2rem}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:#eef2ff;color:#3730a3;padding:7px 10px;text-align:left;position:sticky;top:0}
+th{background:#eef2ff;color:#3730a3;padding:7px 10px;text-align:left;position:sticky;top:0;z-index:1}
 td{padding:6px 10px;border-bottom:1px solid #f1f5f9}
 td.r{text-align:right}
-.tscroll{max-height:340px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:8px}
-select{font-size:12px;padding:3px 6px;border-radius:6px;border:1px solid #c7d2fe}
+tr:hover td{background:#f8faff}
+.tscroll{max-height:320px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:8px}
+select{font-size:12px;padding:3px 8px;border-radius:6px;border:1px solid #c7d2fe;background:#fff}
+.btn{border:none;border-radius:8px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:background .15s}
+.btn-white{background:#fff;color:#1e3a8a}.btn-white:hover{background:#dbeafe}
+.btn-green{background:#16a34a;color:#fff}.btn-green:hover{background:#15803d}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.empty{text-align:center;padding:24px;color:#94a3b8;font-size:13px}
 </style>
 </head>
 <body>
 <div class="topbar">
-  <div><h1>📊 Loan Portfolio Dashboard</h1><p>สร้างเมื่อ 04/05/2026 21:30</p></div>
-  <div style="text-align:right">Active: <b>8,905</b> | Closed: <b>6,769</b></div>
+  <div><h1>📊 Loan Portfolio Dashboard</h1><p style="font-size:12px;opacity:.8">สร้างเมื่อ 05/05/2026 13:06</p></div>
+  <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap">
+    <div style="text-align:right;font-size:13px">Active: <b>8,905</b> &nbsp;|&nbsp; Closed: <b>6,769</b></div>
+    <button class="btn btn-green" onclick="downloadCSV()">⬇️ Download CSV</button>
+  </div>
 </div>
+
 <div class="page">
 
-<!-- Daily & Monthly cards -->
+<!-- Row 1: Daily & Monthly cards -->
 <div class="g2">
-  <!-- Daily card -->
   <div class="card" style="border-top:5px solid #1d4ed8">
     <div class="card-title">
-      <span>☀️ รายวัน — <span id="selectedDateLabel">-</span></span>
-      <select id="dateFilter" onchange="updateDayCard(this.value)"><option value="2026-05-04">04/05/2026</option><option value="2026-05-03">03/05/2026</option><option value="2026-05-02">02/05/2026</option><option value="2026-05-01">01/05/2026</option><option value="2026-04-30">30/04/2026</option><option value="2026-04-29">29/04/2026</option><option value="2026-04-28">28/04/2026</option><option value="2026-04-27">27/04/2026</option><option value="2026-04-26">26/04/2026</option><option value="2026-04-25">25/04/2026</option><option value="2026-04-24">24/04/2026</option><option value="2026-04-23">23/04/2026</option><option value="2026-04-22">22/04/2026</option><option value="2026-04-21">21/04/2026</option></select>
+      <span>☀️ รายวัน — <span id="dLabel">-</span></span>
+      <select id="dateFilter" onchange="onDateChange(this.value)"><option value="2026-05-05">05/05/2026</option><option value="2026-05-04">04/05/2026</option><option value="2026-05-03">03/05/2026</option><option value="2026-05-02">02/05/2026</option><option value="2026-05-01">01/05/2026</option><option value="2026-04-30">30/04/2026</option><option value="2026-04-29">29/04/2026</option><option value="2026-04-28">28/04/2026</option><option value="2026-04-27">27/04/2026</option><option value="2026-04-26">26/04/2026</option><option value="2026-04-25">25/04/2026</option><option value="2026-04-24">24/04/2026</option><option value="2026-04-23">23/04/2026</option><option value="2026-04-22">22/04/2026</option></select>
     </div>
-    <div style="height:160px"><canvas id="todayPie"></canvas></div>
+    <div style="height:150px"><canvas id="todayPie"></canvas></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
-      <div class="kpi">
-        <div class="kpi-label">ใหม่</div>
-        <div class="kpi-value" id="d-new-cnt">0</div>
-        <div style="font-size:10px">$<span id="d-new-dis">0</span></div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">ปิด</div>
-        <div class="kpi-value" id="d-cls-cnt">0</div>
-        <div style="font-size:10px">$<span id="d-cls-dis">0</span></div>
-      </div>
+      <div class="kpi"><div class="kpi-label">ใหม่</div><div class="kpi-value" id="d-nc">0</div><div style="font-size:10px">$<span id="d-nd">0</span></div></div>
+      <div class="kpi"><div class="kpi-label">ปิด</div><div class="kpi-value" id="d-cc">0</div><div style="font-size:10px">$<span id="d-cd">0</span></div></div>
     </div>
   </div>
 
-  <!-- Monthly card -->
   <div class="card" style="border-top:5px solid #7c3aed">
     <div class="card-title">
-      <span>📆 รายเดือน — <span id="selectedMonthLabel">-</span></span>
-      <select id="monthFilter" onchange="updateMonthCard(this.value)"><option value="2026-05">พ.ค. 2026</option><option value="2026-04">เม.ย. 2026</option><option value="2026-03">มี.ค. 2026</option><option value="2026-02">ก.พ. 2026</option><option value="2026-01">ม.ค. 2026</option><option value="2025-12">ธ.ค. 2025</option><option value="2025-11">พ.ย. 2025</option><option value="2025-10">ต.ค. 2025</option><option value="2025-09">ก.ย. 2025</option><option value="2025-08">ส.ค. 2025</option><option value="2025-07">ก.ค. 2025</option><option value="2025-06">มิ.ย. 2025</option><option value="2025-05">พ.ค. 2025</option><option value="2025-04">เม.ย. 2025</option><option value="2025-03">มี.ค. 2025</option><option value="2025-02">ก.พ. 2025</option><option value="2025-01">ม.ค. 2025</option><option value="2024-12">ธ.ค. 2024</option><option value="2024-11">พ.ย. 2024</option><option value="2024-10">ต.ค. 2024</option><option value="2024-09">ก.ย. 2024</option><option value="2024-08">ส.ค. 2024</option><option value="2024-07">ก.ค. 2024</option><option value="2024-06">มิ.ย. 2024</option><option value="2024-05">พ.ค. 2024</option><option value="2024-04">เม.ย. 2024</option><option value="2024-03">มี.ค. 2024</option><option value="2024-02">ก.พ. 2024</option><option value="2024-01">ม.ค. 2024</option><option value="2023-12">ธ.ค. 2023</option><option value="2023-11">พ.ย. 2023</option><option value="2023-10">ต.ค. 2023</option><option value="2023-09">ก.ย. 2023</option><option value="2023-08">ส.ค. 2023</option><option value="2023-07">ก.ค. 2023</option><option value="2023-06">มิ.ย. 2023</option><option value="2023-05">พ.ค. 2023</option><option value="2023-04">เม.ย. 2023</option><option value="2023-03">มี.ค. 2023</option><option value="2023-02">ก.พ. 2023</option></select>
+      <span>📆 รายเดือน — <span id="mLabel">-</span></span>
+      <select id="monthFilter" onchange="onMonthChange(this.value)"><option value="2026-05">พ.ค. 2026</option><option value="2026-04">เม.ย. 2026</option><option value="2026-03">มี.ค. 2026</option><option value="2026-02">ก.พ. 2026</option><option value="2026-01">ม.ค. 2026</option><option value="2025-12">ธ.ค. 2025</option><option value="2025-11">พ.ย. 2025</option><option value="2025-10">ต.ค. 2025</option><option value="2025-09">ก.ย. 2025</option><option value="2025-08">ส.ค. 2025</option><option value="2025-07">ก.ค. 2025</option><option value="2025-06">มิ.ย. 2025</option><option value="2025-05">พ.ค. 2025</option><option value="2025-04">เม.ย. 2025</option><option value="2025-03">มี.ค. 2025</option><option value="2025-02">ก.พ. 2025</option><option value="2025-01">ม.ค. 2025</option><option value="2024-12">ธ.ค. 2024</option><option value="2024-11">พ.ย. 2024</option><option value="2024-10">ต.ค. 2024</option><option value="2024-09">ก.ย. 2024</option><option value="2024-08">ส.ค. 2024</option><option value="2024-07">ก.ค. 2024</option><option value="2024-06">มิ.ย. 2024</option><option value="2024-05">พ.ค. 2024</option><option value="2024-04">เม.ย. 2024</option><option value="2024-03">มี.ค. 2024</option><option value="2024-02">ก.พ. 2024</option><option value="2024-01">ม.ค. 2024</option><option value="2023-12">ธ.ค. 2023</option><option value="2023-11">พ.ย. 2023</option><option value="2023-10">ต.ค. 2023</option><option value="2023-09">ก.ย. 2023</option><option value="2023-08">ส.ค. 2023</option><option value="2023-07">ก.ค. 2023</option><option value="2023-06">มิ.ย. 2023</option><option value="2023-05">พ.ค. 2023</option><option value="2023-04">เม.ย. 2023</option><option value="2023-03">มี.ค. 2023</option><option value="2023-02">ก.พ. 2023</option></select>
     </div>
-    <div style="height:160px"><canvas id="monthPie"></canvas></div>
+    <div style="height:150px"><canvas id="monthPie"></canvas></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
-      <div class="kpi">
-        <div class="kpi-label">ใหม่</div>
-        <div class="kpi-value" id="m-new-cnt">0</div>
-        <div style="font-size:10px">$<span id="m-new-dis">0</span></div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">ปิด</div>
-        <div class="kpi-value" id="m-cls-cnt">0</div>
-        <div style="font-size:10px">$<span id="m-cls-dis">0</span></div>
-      </div>
+      <div class="kpi"><div class="kpi-label">ใหม่</div><div class="kpi-value" id="m-nc">0</div><div style="font-size:10px">$<span id="m-nd">0</span></div></div>
+      <div class="kpi"><div class="kpi-label">ปิด</div><div class="kpi-value" id="m-cc">0</div><div style="font-size:10px">$<span id="m-cd">0</span></div></div>
     </div>
   </div>
 </div>
 
-<!-- Daily bar chart (count only) -->
-<div class="card">
-  <div class="card-title">📅 จำนวนสัญญารายวัน (30 วันล่าสุด)</div>
-  <div class="chart-wrap ch240"><canvas id="dCnt"></canvas></div>
+<!-- Row 2: Product breakdown — follows both dropdowns -->
+<div class="g2b">
+  <div class="card" style="border-top:5px solid #06b6d4">
+    <div class="card-title" style="flex-direction:column;align-items:flex-start;gap:6px">
+      <span>🏷️ Loan Product — <span id="prodDLabel" style="color:#0891b2"></span></span>
+      <span style="font-size:11px;color:#64748b">📆 <span id="prodMLabel" style="color:#7c3aed"></span></span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <div>
+        <p style="font-size:10px;color:#64748b;font-weight:600;text-align:center;margin-bottom:2px">สัญญาใหม่</p>
+        <div style="height:190px"><canvas id="prodNewPie"></canvas></div>
+      </div>
+      <div>
+        <p style="font-size:10px;color:#64748b;font-weight:600;text-align:center;margin-bottom:2px">สัญญาปิด</p>
+        <div style="height:190px"><canvas id="prodClsPie"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-top:5px solid #06b6d4">
+    <div class="card-title">📋 รายละเอียด Loan Product</div>
+    <div class="tscroll">
+      <table>
+        <thead><tr>
+          <th>Product</th>
+          <th class="r">ใหม่</th><th class="r">มูลค่า (USD)</th>
+          <th class="r">ปิด</th><th class="r">มูลค่า (USD)</th>
+          <th class="r">Net</th>
+        </tr></thead>
+        <tbody id="prodBody"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
-<!-- Monthly summary table -->
+<!-- Row 3: Daily bar -->
+<div class="card">
+  <div class="card-title">📅 จำนวนสัญญารายวัน (30 วันล่าสุด)</div>
+  <div style="height:240px"><canvas id="dBar"></canvas></div>
+</div>
+
+<!-- Row 4: Monthly table -->
 <div class="card">
   <div class="card-title">📋 สรุปรายเดือน</div>
   <div class="tscroll">
     <table>
-      <thead>
-        <tr>
-          <th>เดือน</th>
-          <th class="r">ใหม่ (จำนวน)</th><th class="r">ใหม่ (เม็ดเงิน)</th>
-          <th class="r">ปิด (จำนวน)</th><th class="r">ปิด (เม็ดเงิน)</th>
-          <th class="r">Net</th>
-        </tr>
-      </thead>
+      <thead><tr>
+        <th>เดือน</th>
+        <th class="r">สัญญาใหม่</th><th class="r">มูลค่า (USD)</th>
+        <th class="r">สัญญาปิด</th><th class="r">มูลค่า (USD)</th>
+        <th class="r">Net</th>
+      </tr></thead>
       <tbody><tr><td>2023-02</td><td class='r'>18</td><td class='r'>$51,056</td><td class='r'>1</td><td class='r'>$2,550</td><td class='r' style='color:#16a34a;font-weight:600'>+17</td></tr><tr><td>2023-03</td><td class='r'>208</td><td class='r'>$566,404</td><td class='r'>1</td><td class='r'>$1,860</td><td class='r' style='color:#16a34a;font-weight:600'>+207</td></tr><tr><td>2023-04</td><td class='r'>279</td><td class='r'>$772,102</td><td class='r'>1</td><td class='r'>$2,650</td><td class='r' style='color:#16a34a;font-weight:600'>+278</td></tr><tr><td>2023-05</td><td class='r'>335</td><td class='r'>$899,303</td><td class='r'>0</td><td class='r'>$0</td><td class='r' style='color:#16a34a;font-weight:600'>+335</td></tr><tr><td>2023-06</td><td class='r'>370</td><td class='r'>$1,004,429</td><td class='r'>8</td><td class='r'>$23,013</td><td class='r' style='color:#16a34a;font-weight:600'>+362</td></tr><tr><td>2023-07</td><td class='r'>346</td><td class='r'>$907,553</td><td class='r'>4</td><td class='r'>$10,800</td><td class='r' style='color:#16a34a;font-weight:600'>+342</td></tr><tr><td>2023-08</td><td class='r'>399</td><td class='r'>$1,052,833</td><td class='r'>9</td><td class='r'>$22,728</td><td class='r' style='color:#16a34a;font-weight:600'>+390</td></tr><tr><td>2023-09</td><td class='r'>380</td><td class='r'>$997,238</td><td class='r'>9</td><td class='r'>$21,800</td><td class='r' style='color:#16a34a;font-weight:600'>+371</td></tr><tr><td>2023-10</td><td class='r'>418</td><td class='r'>$1,098,449</td><td class='r'>19</td><td class='r'>$51,618</td><td class='r' style='color:#16a34a;font-weight:600'>+399</td></tr><tr><td>2023-11</td><td class='r'>418</td><td class='r'>$1,107,904</td><td class='r'>27</td><td class='r'>$70,523</td><td class='r' style='color:#16a34a;font-weight:600'>+391</td></tr><tr><td>2023-12</td><td class='r'>528</td><td class='r'>$1,389,061</td><td class='r'>22</td><td class='r'>$59,553</td><td class='r' style='color:#16a34a;font-weight:600'>+506</td></tr><tr><td>2024-01</td><td class='r'>537</td><td class='r'>$1,411,322</td><td class='r'>413</td><td class='r'>$1,109,875</td><td class='r' style='color:#16a34a;font-weight:600'>+124</td></tr><tr><td>2024-02</td><td class='r'>581</td><td class='r'>$1,520,092</td><td class='r'>32</td><td class='r'>$81,638</td><td class='r' style='color:#16a34a;font-weight:600'>+549</td></tr><tr><td>2024-03</td><td class='r'>652</td><td class='r'>$1,681,238</td><td class='r'>258</td><td class='r'>$674,941</td><td class='r' style='color:#16a34a;font-weight:600'>+394</td></tr><tr><td>2024-04</td><td class='r'>503</td><td class='r'>$1,309,778</td><td class='r'>149</td><td class='r'>$393,323</td><td class='r' style='color:#16a34a;font-weight:600'>+354</td></tr><tr><td>2024-05</td><td class='r'>320</td><td class='r'>$777,550</td><td class='r'>156</td><td class='r'>$410,632</td><td class='r' style='color:#16a34a;font-weight:600'>+164</td></tr><tr><td>2024-06</td><td class='r'>238</td><td class='r'>$576,491</td><td class='r'>299</td><td class='r'>$780,310</td><td class='r' style='color:#dc2626;font-weight:600'>-61</td></tr><tr><td>2024-07</td><td class='r'>234</td><td class='r'>$571,693</td><td class='r'>373</td><td class='r'>$964,055</td><td class='r' style='color:#dc2626;font-weight:600'>-139</td></tr><tr><td>2024-08</td><td class='r'>179</td><td class='r'>$428,261</td><td class='r'>378</td><td class='r'>$982,916</td><td class='r' style='color:#dc2626;font-weight:600'>-199</td></tr><tr><td>2024-09</td><td class='r'>133</td><td class='r'>$325,764</td><td class='r'>336</td><td class='r'>$868,460</td><td class='r' style='color:#dc2626;font-weight:600'>-203</td></tr><tr><td>2024-10</td><td class='r'>136</td><td class='r'>$324,858</td><td class='r'>239</td><td class='r'>$613,696</td><td class='r' style='color:#dc2626;font-weight:600'>-103</td></tr><tr><td>2024-11</td><td class='r'>160</td><td class='r'>$387,666</td><td class='r'>250</td><td class='r'>$638,068</td><td class='r' style='color:#dc2626;font-weight:600'>-90</td></tr><tr><td>2024-12</td><td class='r'>119</td><td class='r'>$286,580</td><td class='r'>343</td><td class='r'>$898,764</td><td class='r' style='color:#dc2626;font-weight:600'>-224</td></tr><tr><td>2025-01</td><td class='r'>106</td><td class='r'>$251,288</td><td class='r'>211</td><td class='r'>$522,998</td><td class='r' style='color:#dc2626;font-weight:600'>-105</td></tr><tr><td>2025-02</td><td class='r'>3</td><td class='r'>$6,702</td><td class='r'>174</td><td class='r'>$444,680</td><td class='r' style='color:#dc2626;font-weight:600'>-171</td></tr><tr><td>2025-03</td><td class='r'>54</td><td class='r'>$129,152</td><td class='r'>227</td><td class='r'>$570,616</td><td class='r' style='color:#dc2626;font-weight:600'>-173</td></tr><tr><td>2025-04</td><td class='r'>43</td><td class='r'>$99,798</td><td class='r'>173</td><td class='r'>$429,242</td><td class='r' style='color:#dc2626;font-weight:600'>-130</td></tr><tr><td>2025-05</td><td class='r'>53</td><td class='r'>$131,966</td><td class='r'>267</td><td class='r'>$672,136</td><td class='r' style='color:#dc2626;font-weight:600'>-214</td></tr><tr><td>2025-06</td><td class='r'>59</td><td class='r'>$144,540</td><td class='r'>174</td><td class='r'>$440,700</td><td class='r' style='color:#dc2626;font-weight:600'>-115</td></tr><tr><td>2025-07</td><td class='r'>55</td><td class='r'>$136,795</td><td class='r'>455</td><td class='r'>$1,186,372</td><td class='r' style='color:#dc2626;font-weight:600'>-400</td></tr><tr><td>2025-08</td><td class='r'>67</td><td class='r'>$164,662</td><td class='r'>183</td><td class='r'>$449,861</td><td class='r' style='color:#dc2626;font-weight:600'>-116</td></tr><tr><td>2025-09</td><td class='r'>82</td><td class='r'>$206,318</td><td class='r'>157</td><td class='r'>$392,227</td><td class='r' style='color:#dc2626;font-weight:600'>-75</td></tr><tr><td>2025-10</td><td class='r'>102</td><td class='r'>$259,988</td><td class='r'>148</td><td class='r'>$371,802</td><td class='r' style='color:#dc2626;font-weight:600'>-46</td></tr><tr><td>2025-11</td><td class='r'>119</td><td class='r'>$295,224</td><td class='r'>190</td><td class='r'>$470,908</td><td class='r' style='color:#dc2626;font-weight:600'>-71</td></tr><tr><td>2025-12</td><td class='r'>120</td><td class='r'>$33,506,491</td><td class='r'>150</td><td class='r'>$389,208</td><td class='r' style='color:#dc2626;font-weight:600'>-30</td></tr><tr><td>2026-01</td><td class='r'>132</td><td class='r'>$341,422</td><td class='r'>166</td><td class='r'>$409,180</td><td class='r' style='color:#dc2626;font-weight:600'>-34</td></tr><tr><td>2026-02</td><td class='r'>124</td><td class='r'>$302,946</td><td class='r'>175</td><td class='r'>$436,563</td><td class='r' style='color:#dc2626;font-weight:600'>-51</td></tr><tr><td>2026-03</td><td class='r'>141</td><td class='r'>$42,113,239</td><td class='r'>300</td><td class='r'>$780,062</td><td class='r' style='color:#dc2626;font-weight:600'>-159</td></tr><tr><td>2026-04</td><td class='r'>141</td><td class='r'>$75,401,496</td><td class='r'>276</td><td class='r'>$711,858</td><td class='r' style='color:#dc2626;font-weight:600'>-135</td></tr><tr><td>2026-05</td><td class='r'>13</td><td class='r'>$20,728,913</td><td class='r'>15</td><td class='r'>$37,343</td><td class='r' style='color:#dc2626;font-weight:600'>-2</td></tr></tbody>
     </table>
   </div>
 </div>
 
-</div><!-- .page -->
+</div>
 
 <script>
-const dailyLookup   = {"2026-04-21": {"new_cnt": 10, "cls_cnt": 14, "new_dis": 25587.0, "cls_dis": 39410.0}, "2026-04-22": {"new_cnt": 5, "cls_cnt": 7, "new_dis": 11300.0, "cls_dis": 16220.0}, "2026-04-23": {"new_cnt": 6, "cls_cnt": 7, "new_dis": 15571.0, "cls_dis": 15832.0}, "2026-04-24": {"new_cnt": 6, "cls_cnt": 36, "new_dis": 13635.0, "cls_dis": 84320.5}, "2026-04-25": {"new_cnt": 0, "cls_cnt": 3, "new_dis": 0.0, "cls_dis": 8299.0}, "2026-04-26": {"new_cnt": 0, "cls_cnt": 4, "new_dis": 0.0, "cls_dis": 10260.0}, "2026-04-27": {"new_cnt": 9, "cls_cnt": 9, "new_dis": 14962551.0, "cls_dis": 22578.0}, "2026-04-28": {"new_cnt": 4, "cls_cnt": 11, "new_dis": 10952.0, "cls_dis": 30143.0}, "2026-04-29": {"new_cnt": 6, "cls_cnt": 6, "new_dis": 11080729.0, "cls_dis": 16080.0}, "2026-04-30": {"new_cnt": 10, "cls_cnt": 11, "new_dis": 25158.0, "cls_dis": 28137.0}, "2026-05-01": {"new_cnt": 0, "cls_cnt": 9, "new_dis": 0.0, "cls_dis": 22260.0}, "2026-05-02": {"new_cnt": 0, "cls_cnt": 5, "new_dis": 0.0, "cls_dis": 13553.0}, "2026-05-03": {"new_cnt": 0, "cls_cnt": 1, "new_dis": 0.0, "cls_dis": 1530.0}, "2026-05-04": {"new_cnt": 13, "cls_cnt": 0, "new_dis": 20728913.0, "cls_dis": 0.0}};
-const monthlyLookup = {"2023-02": {"new_cnt": 18, "cls_cnt": 1, "new_dis": 51055.5, "cls_dis": 2550.0, "net": 17}, "2023-03": {"new_cnt": 208, "cls_cnt": 1, "new_dis": 566404.0, "cls_dis": 1860.0, "net": 207}, "2023-04": {"new_cnt": 279, "cls_cnt": 1, "new_dis": 772102.0, "cls_dis": 2650.0, "net": 278}, "2023-05": {"new_cnt": 335, "cls_cnt": 0, "new_dis": 899303.0, "cls_dis": 0.0, "net": 335}, "2023-06": {"new_cnt": 370, "cls_cnt": 8, "new_dis": 1004429.0, "cls_dis": 23013.0, "net": 362}, "2023-07": {"new_cnt": 346, "cls_cnt": 4, "new_dis": 907553.0, "cls_dis": 10800.0, "net": 342}, "2023-08": {"new_cnt": 399, "cls_cnt": 9, "new_dis": 1052833.0, "cls_dis": 22728.0, "net": 390}, "2023-09": {"new_cnt": 380, "cls_cnt": 9, "new_dis": 997238.5, "cls_dis": 21800.0, "net": 371}, "2023-10": {"new_cnt": 418, "cls_cnt": 19, "new_dis": 1098449.0, "cls_dis": 51618.0, "net": 399}, "2023-11": {"new_cnt": 418, "cls_cnt": 27, "new_dis": 1107904.0, "cls_dis": 70523.0, "net": 391}, "2023-12": {"new_cnt": 528, "cls_cnt": 22, "new_dis": 1389061.0, "cls_dis": 59553.0, "net": 506}, "2024-01": {"new_cnt": 537, "cls_cnt": 413, "new_dis": 1411321.5, "cls_dis": 1109875.0, "net": 124}, "2024-02": {"new_cnt": 581, "cls_cnt": 32, "new_dis": 1520091.5, "cls_dis": 81638.0, "net": 549}, "2024-03": {"new_cnt": 652, "cls_cnt": 258, "new_dis": 1681238.0, "cls_dis": 674941.0, "net": 394}, "2024-04": {"new_cnt": 503, "cls_cnt": 149, "new_dis": 1309777.5, "cls_dis": 393323.0, "net": 354}, "2024-05": {"new_cnt": 320, "cls_cnt": 156, "new_dis": 777550.3, "cls_dis": 410632.0, "net": 164}, "2024-06": {"new_cnt": 238, "cls_cnt": 299, "new_dis": 576491.0, "cls_dis": 780310.0, "net": -61}, "2024-07": {"new_cnt": 234, "cls_cnt": 373, "new_dis": 571692.95, "cls_dis": 964055.0, "net": -139}, "2024-08": {"new_cnt": 179, "cls_cnt": 378, "new_dis": 428261.0, "cls_dis": 982915.5, "net": -199}, "2024-09": {"new_cnt": 133, "cls_cnt": 336, "new_dis": 325764.0, "cls_dis": 868460.5, "net": -203}, "2024-10": {"new_cnt": 136, "cls_cnt": 239, "new_dis": 324857.5, "cls_dis": 613696.0, "net": -103}, "2024-11": {"new_cnt": 160, "cls_cnt": 250, "new_dis": 387665.55, "cls_dis": 638068.5, "net": -90}, "2024-12": {"new_cnt": 119, "cls_cnt": 343, "new_dis": 286579.5, "cls_dis": 898763.5, "net": -224}, "2025-01": {"new_cnt": 106, "cls_cnt": 211, "new_dis": 251287.5, "cls_dis": 522998.0, "net": -105}, "2025-02": {"new_cnt": 3, "cls_cnt": 174, "new_dis": 6702.0, "cls_dis": 444679.5, "net": -171}, "2025-03": {"new_cnt": 54, "cls_cnt": 227, "new_dis": 129152.5, "cls_dis": 570615.5, "net": -173}, "2025-04": {"new_cnt": 43, "cls_cnt": 173, "new_dis": 99798.0, "cls_dis": 429242.0, "net": -130}, "2025-05": {"new_cnt": 53, "cls_cnt": 267, "new_dis": 131966.5, "cls_dis": 672136.5, "net": -214}, "2025-06": {"new_cnt": 59, "cls_cnt": 174, "new_dis": 144540.0, "cls_dis": 440700.0, "net": -115}, "2025-07": {"new_cnt": 55, "cls_cnt": 455, "new_dis": 136795.0, "cls_dis": 1186372.0, "net": -400}, "2025-08": {"new_cnt": 67, "cls_cnt": 183, "new_dis": 164662.0, "cls_dis": 449861.0, "net": -116}, "2025-09": {"new_cnt": 82, "cls_cnt": 157, "new_dis": 206318.0, "cls_dis": 392227.0, "net": -75}, "2025-10": {"new_cnt": 102, "cls_cnt": 148, "new_dis": 259988.0, "cls_dis": 371802.04, "net": -46}, "2025-11": {"new_cnt": 119, "cls_cnt": 190, "new_dis": 295224.0, "cls_dis": 470908.5, "net": -71}, "2025-12": {"new_cnt": 120, "cls_cnt": 150, "new_dis": 33506491.0, "cls_dis": 389207.5, "net": -30}, "2026-01": {"new_cnt": 132, "cls_cnt": 166, "new_dis": 341422.0, "cls_dis": 409179.5, "net": -34}, "2026-02": {"new_cnt": 124, "cls_cnt": 175, "new_dis": 302946.0, "cls_dis": 436563.0, "net": -51}, "2026-03": {"new_cnt": 141, "cls_cnt": 300, "new_dis": 42113239.0, "cls_dis": 780061.5, "net": -159}, "2026-04": {"new_cnt": 141, "cls_cnt": 276, "new_dis": 75401496.0, "cls_dis": 711857.5, "net": -135}, "2026-05": {"new_cnt": 13, "cls_cnt": 15, "new_dis": 20728913.0, "cls_dis": 37343.0, "net": -2}};
-let todayPieChart, monthPieChart;
+// ── data ──────────────────────────────────────────────────
+const DL  = {"2026-04-22": {"new_cnt": 5, "cls_cnt": 7, "new_dis": 11300.0, "cls_dis": 16220.0}, "2026-04-23": {"new_cnt": 6, "cls_cnt": 7, "new_dis": 15571.0, "cls_dis": 15832.0}, "2026-04-24": {"new_cnt": 6, "cls_cnt": 36, "new_dis": 13635.0, "cls_dis": 84320.5}, "2026-04-25": {"new_cnt": 0, "cls_cnt": 3, "new_dis": 0.0, "cls_dis": 8299.0}, "2026-04-26": {"new_cnt": 0, "cls_cnt": 4, "new_dis": 0.0, "cls_dis": 10260.0}, "2026-04-27": {"new_cnt": 9, "cls_cnt": 9, "new_dis": 14962551.0, "cls_dis": 22578.0}, "2026-04-28": {"new_cnt": 4, "cls_cnt": 11, "new_dis": 10952.0, "cls_dis": 30143.0}, "2026-04-29": {"new_cnt": 6, "cls_cnt": 6, "new_dis": 11080729.0, "cls_dis": 16080.0}, "2026-04-30": {"new_cnt": 10, "cls_cnt": 11, "new_dis": 25158.0, "cls_dis": 28137.0}, "2026-05-01": {"new_cnt": 0, "cls_cnt": 9, "new_dis": 0.0, "cls_dis": 22260.0}, "2026-05-02": {"new_cnt": 0, "cls_cnt": 5, "new_dis": 0.0, "cls_dis": 13553.0}, "2026-05-03": {"new_cnt": 0, "cls_cnt": 1, "new_dis": 0.0, "cls_dis": 1530.0}, "2026-05-04": {"new_cnt": 13, "cls_cnt": 0, "new_dis": 20728913.0, "cls_dis": 0.0}, "2026-05-05": {"new_cnt": 0, "cls_cnt": 0, "new_dis": 0.0, "cls_dis": 0.0}};
+const ML  = {"2023-02": {"new_cnt": 18, "cls_cnt": 1, "new_dis": 51055.5, "cls_dis": 2550.0, "net": 17}, "2023-03": {"new_cnt": 208, "cls_cnt": 1, "new_dis": 566404.0, "cls_dis": 1860.0, "net": 207}, "2023-04": {"new_cnt": 279, "cls_cnt": 1, "new_dis": 772102.0, "cls_dis": 2650.0, "net": 278}, "2023-05": {"new_cnt": 335, "cls_cnt": 0, "new_dis": 899303.0, "cls_dis": 0.0, "net": 335}, "2023-06": {"new_cnt": 370, "cls_cnt": 8, "new_dis": 1004429.0, "cls_dis": 23013.0, "net": 362}, "2023-07": {"new_cnt": 346, "cls_cnt": 4, "new_dis": 907553.0, "cls_dis": 10800.0, "net": 342}, "2023-08": {"new_cnt": 399, "cls_cnt": 9, "new_dis": 1052833.0, "cls_dis": 22728.0, "net": 390}, "2023-09": {"new_cnt": 380, "cls_cnt": 9, "new_dis": 997238.5, "cls_dis": 21800.0, "net": 371}, "2023-10": {"new_cnt": 418, "cls_cnt": 19, "new_dis": 1098449.0, "cls_dis": 51618.0, "net": 399}, "2023-11": {"new_cnt": 418, "cls_cnt": 27, "new_dis": 1107904.0, "cls_dis": 70523.0, "net": 391}, "2023-12": {"new_cnt": 528, "cls_cnt": 22, "new_dis": 1389061.0, "cls_dis": 59553.0, "net": 506}, "2024-01": {"new_cnt": 537, "cls_cnt": 413, "new_dis": 1411321.5, "cls_dis": 1109875.0, "net": 124}, "2024-02": {"new_cnt": 581, "cls_cnt": 32, "new_dis": 1520091.5, "cls_dis": 81638.0, "net": 549}, "2024-03": {"new_cnt": 652, "cls_cnt": 258, "new_dis": 1681238.0, "cls_dis": 674941.0, "net": 394}, "2024-04": {"new_cnt": 503, "cls_cnt": 149, "new_dis": 1309777.5, "cls_dis": 393323.0, "net": 354}, "2024-05": {"new_cnt": 320, "cls_cnt": 156, "new_dis": 777550.3, "cls_dis": 410632.0, "net": 164}, "2024-06": {"new_cnt": 238, "cls_cnt": 299, "new_dis": 576491.0, "cls_dis": 780310.0, "net": -61}, "2024-07": {"new_cnt": 234, "cls_cnt": 373, "new_dis": 571692.95, "cls_dis": 964055.0, "net": -139}, "2024-08": {"new_cnt": 179, "cls_cnt": 378, "new_dis": 428261.0, "cls_dis": 982915.5, "net": -199}, "2024-09": {"new_cnt": 133, "cls_cnt": 336, "new_dis": 325764.0, "cls_dis": 868460.5, "net": -203}, "2024-10": {"new_cnt": 136, "cls_cnt": 239, "new_dis": 324857.5, "cls_dis": 613696.0, "net": -103}, "2024-11": {"new_cnt": 160, "cls_cnt": 250, "new_dis": 387665.55, "cls_dis": 638068.5, "net": -90}, "2024-12": {"new_cnt": 119, "cls_cnt": 343, "new_dis": 286579.5, "cls_dis": 898763.5, "net": -224}, "2025-01": {"new_cnt": 106, "cls_cnt": 211, "new_dis": 251287.5, "cls_dis": 522998.0, "net": -105}, "2025-02": {"new_cnt": 3, "cls_cnt": 174, "new_dis": 6702.0, "cls_dis": 444679.5, "net": -171}, "2025-03": {"new_cnt": 54, "cls_cnt": 227, "new_dis": 129152.5, "cls_dis": 570615.5, "net": -173}, "2025-04": {"new_cnt": 43, "cls_cnt": 173, "new_dis": 99798.0, "cls_dis": 429242.0, "net": -130}, "2025-05": {"new_cnt": 53, "cls_cnt": 267, "new_dis": 131966.5, "cls_dis": 672136.5, "net": -214}, "2025-06": {"new_cnt": 59, "cls_cnt": 174, "new_dis": 144540.0, "cls_dis": 440700.0, "net": -115}, "2025-07": {"new_cnt": 55, "cls_cnt": 455, "new_dis": 136795.0, "cls_dis": 1186372.0, "net": -400}, "2025-08": {"new_cnt": 67, "cls_cnt": 183, "new_dis": 164662.0, "cls_dis": 449861.0, "net": -116}, "2025-09": {"new_cnt": 82, "cls_cnt": 157, "new_dis": 206318.0, "cls_dis": 392227.0, "net": -75}, "2025-10": {"new_cnt": 102, "cls_cnt": 148, "new_dis": 259988.0, "cls_dis": 371802.04, "net": -46}, "2025-11": {"new_cnt": 119, "cls_cnt": 190, "new_dis": 295224.0, "cls_dis": 470908.5, "net": -71}, "2025-12": {"new_cnt": 120, "cls_cnt": 150, "new_dis": 33506491.0, "cls_dis": 389207.5, "net": -30}, "2026-01": {"new_cnt": 132, "cls_cnt": 166, "new_dis": 341422.0, "cls_dis": 409179.5, "net": -34}, "2026-02": {"new_cnt": 124, "cls_cnt": 175, "new_dis": 302946.0, "cls_dis": 436563.0, "net": -51}, "2026-03": {"new_cnt": 141, "cls_cnt": 300, "new_dis": 42113239.0, "cls_dis": 780061.5, "net": -159}, "2026-04": {"new_cnt": 141, "cls_cnt": 276, "new_dis": 75401496.0, "cls_dis": 711857.5, "net": -135}, "2026-05": {"new_cnt": 13, "cls_cnt": 15, "new_dis": 20728913.0, "cls_dis": 37343.0, "net": -2}};
+const DPL = {"2026-04-22": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 3, "cd": 8050.0}, "HP MO-S": {"nc": 5, "nd": 11300.0, "cc": 4, "cd": 8170.0}}, "2026-04-23": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 5, "cd": 12070.0}, "HP MO-S": {"nc": 5, "nd": 12760.0, "cc": 2, "cd": 3762.0}, "HP MO-M": {"nc": 1, "nd": 2811.0, "cc": 0, "cd": 0.0}}, "2026-04-24": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 21, "cd": 54408.0}, "HP MO-S": {"nc": 5, "nd": 13035.0, "cc": 13, "cd": 25422.5}, "HP MO-M": {"nc": 0, "nd": 0.0, "cc": 2, "cd": 4490.0}, "PawnShop-MC Monthly": {"nc": 1, "nd": 600.0, "cc": 0, "cd": 0.0}}, "2026-04-25": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 3, "cd": 8299.0}}, "2026-04-26": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 3, "cd": 8300.0}, "HP MO-S": {"nc": 0, "nd": 0.0, "cc": 1, "cd": 1960.0}}, "2026-04-27": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 7, "cd": 17308.0}, "HP MO-S": {"nc": 9, "nd": 14962551.0, "cc": 2, "cd": 5270.0}}, "2026-04-28": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 6, "cd": 18460.0}, "HP MO-S": {"nc": 4, "nd": 10952.0, "cc": 5, "cd": 11683.0}}, "2026-04-29": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 3, "cd": 8100.0}, "HP MO-S": {"nc": 5, "nd": 11079967.0, "cc": 3, "cd": 7980.0}, "PawnShop-MC Monthly": {"nc": 1, "nd": 762.0, "cc": 0, "cd": 0.0}}, "2026-04-30": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 8, "cd": 21100.0}, "HP MO-S": {"nc": 9, "nd": 24468.0, "cc": 3, "cd": 7037.0}, "PawnShop-MC Monthly": {"nc": 1, "nd": 690.0, "cc": 0, "cd": 0.0}}, "2026-05-01": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 6, "cd": 14230.0}, "HP MO-S": {"nc": 0, "nd": 0.0, "cc": 2, "cd": 4700.0}, "HP MO-M": {"nc": 0, "nd": 0.0, "cc": 1, "cd": 3330.0}}, "2026-05-02": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 4, "cd": 11330.0}, "HP MO-S": {"nc": 0, "nd": 0.0, "cc": 1, "cd": 2223.0}}, "2026-05-03": {"HP MO-S": {"nc": 0, "nd": 0.0, "cc": 1, "cd": 1530.0}}, "2026-05-04": {"HP MO-S": {"nc": 12, "nd": 20728223.0, "cc": 0, "cd": 0.0}, "PawnShop-MC Monthly": {"nc": 1, "nd": 690.0, "cc": 0, "cd": 0.0}}, "2026-05-05": {}};
+const MPL = {"2023-02": {"HP MO": {"nc": 18, "nd": 51055.5, "cc": 1, "cd": 2550.0}}, "2023-03": {"HP MO": {"nc": 208, "nd": 566404.0, "cc": 1, "cd": 1860.0}}, "2023-04": {"HP MO": {"nc": 279, "nd": 772102.0, "cc": 1, "cd": 2650.0}}, "2023-05": {"HP MO": {"nc": 335, "nd": 899303.0, "cc": 0, "cd": 0.0}}, "2023-06": {"HP MO": {"nc": 370, "nd": 1004429.0, "cc": 8, "cd": 23013.0}}, "2023-07": {"HP MO": {"nc": 346, "nd": 907553.0, "cc": 4, "cd": 10800.0}}, "2023-08": {"HP MO": {"nc": 399, "nd": 1052833.0, "cc": 9, "cd": 22728.0}}, "2023-09": {"HP MO": {"nc": 380, "nd": 997238.5, "cc": 9, "cd": 21800.0}}, "2023-10": {"HP MO": {"nc": 418, "nd": 1098449.0, "cc": 19, "cd": 51618.0}}, "2023-11": {"HP MO": {"nc": 36, "nd": 95560.0, "cc": 27, "cd": 70523.0}, "HP MO-S": {"nc": 369, "nd": 970294.0, "cc": 0, "cd": 0.0}, "HP MO-M": {"nc": 13, "nd": 42050.0, "cc": 0, "cd": 0.0}}, "2023-12": {"HP MO": {"nc": 1, "nd": 2800.0, "cc": 22, "cd": 59553.0}, "HP MO-S": {"nc": 505, "nd": 1314636.0, "cc": 0, "cd": 0.0}, "HP MO-M": {"nc": 22, "nd": 71625.0, "cc": 0, "cd": 0.0}}, "2024-01": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 412, "cd": 1108725.0}, "HP MO-S": {"nc": 505, "nd": 1310248.5, "cc": 1, "cd": 1150.0}, "HP MO-M": {"nc": 32, "nd": 101073.0, "cc": 0, "cd": 0.0}}, "2024-02": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 31, "cd": 79238.0}, "HP MO-S": {"nc": 550, "nd": 1422276.5, "cc": 1, "cd": 2400.0}, "HP MO-M": {"nc": 31, "nd": 97815.0, "cc": 0, "cd": 0.0}}, "2024-03": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 253, "cd": 662251.0}, "HP MO-S": {"nc": 622, "nd": 1582923.0, "cc": 5, "cd": 12690.0}, "HP MO-M": {"nc": 30, "nd": 98315.0, "cc": 0, "cd": 0.0}}, "2024-04": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 143, "cd": 377593.0}, "HP MO-S": {"nc": 476, "nd": 1222374.5, "cc": 6, "cd": 15730.0}, "HP MO-M": {"nc": 27, "nd": 87403.0, "cc": 0, "cd": 0.0}}, "2024-05": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 131, "cd": 343802.0}, "HP MO-S": {"nc": 299, "nd": 713260.3, "cc": 24, "cd": 63380.0}, "HP MO-M": {"nc": 21, "nd": 64290.0, "cc": 1, "cd": 3450.0}}, "2024-06": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 216, "cd": 567514.0}, "HP MO-S": {"nc": 224, "nd": 534707.0, "cc": 80, "cd": 202696.0}, "HP MO-M": {"nc": 14, "nd": 41784.0, "cc": 3, "cd": 10100.0}}, "2024-07": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 242, "cd": 622417.0}, "HP MO-S": {"nc": 210, "nd": 498795.75, "cc": 125, "cd": 323763.0}, "HP MO-M": {"nc": 24, "nd": 72897.2, "cc": 6, "cd": 17875.0}}, "2024-08": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 232, "cd": 612367.5}, "HP MO-S": {"nc": 168, "nd": 393476.0, "cc": 140, "cd": 352383.0}, "HP MO-M": {"nc": 11, "nd": 34785.0, "cc": 6, "cd": 18165.0}}, "2024-09": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 186, "cd": 482737.5}, "HP MO-S": {"nc": 122, "nd": 291813.0, "cc": 145, "cd": 370343.0}, "HP MO-M": {"nc": 11, "nd": 33951.0, "cc": 5, "cd": 15380.0}}, "2024-10": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 117, "cd": 305184.0}, "HP MO-S": {"nc": 130, "nd": 308484.5, "cc": 120, "cd": 301132.0}, "HP MO-M": {"nc": 6, "nd": 16373.0, "cc": 2, "cd": 7380.0}}, "2024-11": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 117, "cd": 304923.0}, "HP MO-S": {"nc": 141, "nd": 332655.55, "cc": 131, "cd": 326165.5}, "HP MO-M": {"nc": 19, "nd": 55010.0, "cc": 2, "cd": 6980.0}}, "2024-12": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 198, "cd": 531200.0}, "HP MO-S": {"nc": 107, "nd": 252238.5, "cc": 133, "cd": 329946.0}, "HP MO-M": {"nc": 12, "nd": 34341.0, "cc": 12, "cd": 37617.5}}, "2025-01": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 99, "cd": 247661.0}, "HP MO-S": {"nc": 97, "nd": 224990.5, "cc": 106, "cd": 257929.0}, "HP MO-M": {"nc": 9, "nd": 26297.0, "cc": 6, "cd": 17408.0}}, "2025-02": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 80, "cd": 208876.0}, "HP MO-S": {"nc": 3, "nd": 6702.0, "cc": 93, "cd": 232513.5}, "HP MO-M": {"nc": 0, "nd": 0.0, "cc": 1, "cd": 3290.0}}, "2025-03": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 102, "cd": 262442.0}, "HP MO-S": {"nc": 48, "nd": 111945.5, "cc": 116, "cd": 281263.5}, "HP MO-M": {"nc": 6, "nd": 17207.0, "cc": 9, "cd": 26910.0}}, "2025-04": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 89, "cd": 222671.0}, "HP MO-S": {"nc": 40, "nd": 90884.0, "cc": 77, "cd": 186906.0}, "HP MO-M": {"nc": 3, "nd": 8914.0, "cc": 7, "cd": 19665.0}}, "2025-05": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 112, "cd": 286965.0}, "HP MO-S": {"nc": 49, "nd": 119756.5, "cc": 149, "cd": 365066.5}, "HP MO-M": {"nc": 4, "nd": 12210.0, "cc": 6, "cd": 20105.0}}, "2025-06": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 92, "cd": 239730.0}, "HP MO-S": {"nc": 57, "nd": 139071.0, "cc": 78, "cd": 189820.0}, "HP MO-M": {"nc": 2, "nd": 5469.0, "cc": 4, "cd": 11150.0}}, "2025-07": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 307, "cd": 823456.0}, "HP MO-S": {"nc": 51, "nd": 125035.0, "cc": 142, "cd": 345371.0}, "HP MO-M": {"nc": 4, "nd": 11760.0, "cc": 6, "cd": 17545.0}}, "2025-08": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 72, "cd": 179309.0}, "HP MO-S": {"nc": 61, "nd": 148723.0, "cc": 106, "cd": 256046.0}, "HP MO-M": {"nc": 5, "nd": 14769.0, "cc": 5, "cd": 14506.0}, "PawnShop-MC Monthly": {"nc": 1, "nd": 1170.0, "cc": 0, "cd": 0.0}}, "2025-09": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 67, "cd": 173798.0}, "HP MO-S": {"nc": 79, "nd": 199703.0, "cc": 82, "cd": 193534.0}, "HP MO-M": {"nc": 2, "nd": 5765.0, "cc": 8, "cd": 24895.0}, "PawnShop-MC Monthly": {"nc": 1, "nd": 850.0, "cc": 0, "cd": 0.0}}, "2025-10": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 63, "cd": 162272.0}, "HP MO-S": {"nc": 96, "nd": 246951.0, "cc": 83, "cd": 203910.04}, "HP MO-M": {"nc": 4, "nd": 11705.0, "cc": 2, "cd": 5620.0}, "PawnShop-MC Monthly": {"nc": 2, "nd": 1332.0, "cc": 0, "cd": 0.0}}, "2025-11": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 70, "cd": 192246.5}, "HP MO-S": {"nc": 115, "nd": 288892.0, "cc": 117, "cd": 268682.0}, "HP MO-M": {"nc": 2, "nd": 4990.0, "cc": 3, "cd": 9980.0}, "PawnShop-MC Monthly": {"nc": 2, "nd": 1342.0, "cc": 0, "cd": 0.0}}, "2025-12": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 55, "cd": 156348.0}, "HP MO-S": {"nc": 117, "nd": 33504387.0, "cc": 84, "cd": 199026.5}, "HP MO-M": {"nc": 0, "nd": 0.0, "cc": 11, "cd": 33833.0}, "PawnShop-MC Monthly": {"nc": 3, "nd": 2104.0, "cc": 0, "cd": 0.0}}, "2026-01": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 62, "cd": 162891.5}, "HP MO-S": {"nc": 126, "nd": 324749.0, "cc": 101, "cd": 237700.0}, "HP MO-M": {"nc": 6, "nd": 16673.0, "cc": 3, "cd": 8588.0}}, "2026-02": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 61, "cd": 165202.0}, "HP MO-S": {"nc": 118, "nd": 293742.0, "cc": 109, "cd": 258061.0}, "HP MO-M": {"nc": 3, "nd": 6836.0, "cc": 5, "cd": 13300.0}, "PawnShop-MC Monthly": {"nc": 3, "nd": 2368.0, "cc": 0, "cd": 0.0}}, "2026-03": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 162, "cd": 442341.0}, "HP MO-S": {"nc": 128, "nd": 30563519.0, "cc": 131, "cd": 316632.5}, "HP MO-M": {"nc": 7, "nd": 11546018.0, "cc": 7, "cd": 21088.0}, "PawnShop-MC Monthly": {"nc": 6, "nd": 3702.0, "cc": 0, "cd": 0.0}}, "2026-04": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 170, "cd": 462362.0}, "HP MO-S": {"nc": 129, "nd": 75389174.0, "cc": 100, "cd": 235071.5}, "HP MO-M": {"nc": 2, "nd": 5806.0, "cc": 5, "cd": 13768.0}, "PawnShop-MC Monthly": {"nc": 10, "nd": 6516.0, "cc": 1, "cd": 656.0}}, "2026-05": {"HP MO": {"nc": 0, "nd": 0.0, "cc": 10, "cd": 25560.0}, "HP MO-S": {"nc": 12, "nd": 20728223.0, "cc": 4, "cd": 8453.0}, "HP MO-M": {"nc": 0, "nd": 0.0, "cc": 1, "cd": 3330.0}, "PawnShop-MC Monthly": {"nc": 1, "nd": 690.0, "cc": 0, "cd": 0.0}}};
+const ALL_PRODS  = ["HP AT", "HP MO", "HP BB", "HP TU", "PL", "HP MO-S", "HP MO-M", "HP MO-L", "PawnShop-MC Monthly", "HP Locked Phone"];
+const COLORS      = ["#3b82f6", "#7c3aed", "#16a34a", "#f59e0b", "#ef4444", "#06b6d4", "#ec4899", "#84cc16", "#f97316", "#6366f1"];
 
-function fmt(n) { return Number(n).toLocaleString(); }
+let curDate='', curMonth='';
+let todayChart, monthChart, newChart, clsChart;
 
-function updateDayCard(dateKey) {
-  const d = dailyLookup[dateKey] || {new_cnt:0,cls_cnt:0,new_dis:0,cls_dis:0};
-  document.getElementById('selectedDateLabel').textContent = dateKey;
-  document.getElementById('d-new-cnt').textContent = fmt(d.new_cnt);
-  document.getElementById('d-cls-cnt').textContent = fmt(d.cls_cnt);
-  document.getElementById('d-new-dis').textContent = fmt(d.new_dis);
-  document.getElementById('d-cls-dis').textContent = fmt(d.cls_dis);
-  if (todayPieChart) {
-    todayPieChart.data.datasets[0].data = [d.new_cnt, d.cls_cnt];
-    todayPieChart.update();
-  }
+const fmt  = n => Number(n).toLocaleString();
+const fmtD = n => '$'+Number(n).toLocaleString(undefined,{maximumFractionDigits:0});
+
+// ── update product section (called after either dropdown changes) ──
+function updateProd() {
+  // daily side
+  const dp = DPL[curDate] || {};
+  document.getElementById('prodDLabel').textContent = curDate || '-';
+
+  // monthly side
+  const mp = MPL[curMonth] || {};
+  document.getElementById('prodMLabel').textContent = curMonth || '-';
+
+  // merge: show union of products that appear in either filter
+  const keys = [...new Set([...Object.keys(dp),...Object.keys(mp)])];
+  const active = ALL_PRODS.filter(p => keys.includes(p));
+  const colors = active.map(p => COLORS[ALL_PRODS.indexOf(p)]);
+
+  const newD = active.map(p => (dp[p]||{}).nc||0);
+  const clsD = active.map(p => (mp[p]||{}).cc||0);
+
+  // donut new (from daily filter)
+  newChart.data.labels = active;
+  newChart.data.datasets[0].data = active.map(p=>(dp[p]||{}).nc||0);
+  newChart.data.datasets[0].backgroundColor = colors;
+  newChart.update();
+
+  // donut closed (from monthly filter)
+  clsChart.data.labels = active;
+  clsChart.data.datasets[0].data = active.map(p=>(mp[p]||{}).cc||0);
+  clsChart.data.datasets[0].backgroundColor = colors;
+  clsChart.update();
+
+  // table — show all products that appear in either
+  const tbody = document.getElementById('prodBody');
+  const rows = ALL_PRODS.map((p,i) => {
+    const d=dp[p]||{nc:0,nd:0,cc:0,cd:0};
+    const m=mp[p]||{nc:0,nd:0,cc:0,cd:0};
+    if(!d.nc&&!d.nd&&!m.cc&&!m.cd) return null;
+    const net=d.nc-m.cc;
+    const nc=net>=0?'color:#16a34a':'color:#dc2626';
+    return `<tr>
+      <td><span class="dot" style="background:${COLORS[i]}"></span><b>${p}</b></td>
+      <td class="r">${fmt(d.nc)}</td><td class="r">${fmtD(d.nd)}</td>
+      <td class="r">${fmt(m.cc)}</td><td class="r">${fmtD(m.cd)}</td>
+      <td class="r" style="${nc};font-weight:600">${net>=0?'+':''}${fmt(net)}</td>
+    </tr>`;
+  }).filter(Boolean);
+  tbody.innerHTML = rows.length
+    ? rows.join('')
+    : '<tr><td colspan="6" class="empty">ไม่มีข้อมูลในช่วงที่เลือก</td></tr>';
 }
 
-function updateMonthCard(ymKey) {
-  const d = monthlyLookup[ymKey] || {new_cnt:0,cls_cnt:0,new_dis:0,cls_dis:0};
-  document.getElementById('selectedMonthLabel').textContent = ymKey;
-  document.getElementById('m-new-cnt').textContent = fmt(d.new_cnt);
-  document.getElementById('m-cls-cnt').textContent = fmt(d.cls_cnt);
-  document.getElementById('m-new-dis').textContent = fmt(d.new_dis);
-  document.getElementById('m-cls-dis').textContent = fmt(d.cls_dis);
-  if (monthPieChart) {
-    monthPieChart.data.datasets[0].data = [d.new_cnt, d.cls_cnt];
-    monthPieChart.update();
-  }
+function onDateChange(v) {
+  curDate = v;
+  const d = DL[v]||{new_cnt:0,cls_cnt:0,new_dis:0,cls_dis:0};
+  document.getElementById('dLabel').textContent = v;
+  document.getElementById('d-nc').textContent = fmt(d.new_cnt);
+  document.getElementById('d-cc').textContent = fmt(d.cls_cnt);
+  document.getElementById('d-nd').textContent = fmt(d.new_dis);
+  document.getElementById('d-cd').textContent = fmt(d.cls_dis);
+  todayChart.data.datasets[0].data = [d.new_cnt,d.cls_cnt];
+  todayChart.update();
+  updateProd();
 }
 
+function onMonthChange(v) {
+  curMonth = v;
+  const d = ML[v]||{new_cnt:0,cls_cnt:0,new_dis:0,cls_dis:0};
+  document.getElementById('mLabel').textContent = v;
+  document.getElementById('m-nc').textContent = fmt(d.new_cnt);
+  document.getElementById('m-cc').textContent = fmt(d.cls_cnt);
+  document.getElementById('m-nd').textContent = fmt(d.new_dis);
+  document.getElementById('m-cd').textContent = fmt(d.cls_dis);
+  monthChart.data.datasets[0].data = [d.new_cnt,d.cls_cnt];
+  monthChart.update();
+  updateProd();
+}
+
+// ── CSV download ──────────────────────────────────────────
+function downloadCSV() {
+  const rows = [];
+  // Section 1: monthly summary
+  rows.push(['=== สรุปรายเดือน ===']);
+  rows.push(['เดือน','สัญญาใหม่ (จำนวน)','มูลค่าใหม่ (USD)','สัญญาปิด (จำนวน)','มูลค่าปิด (USD)','Net']);
+  for(const [ym,d] of Object.entries(ML)){
+    rows.push([ym,d.new_cnt,d.new_dis,d.cls_cnt,d.cls_dis,d.net]);
+  }
+  rows.push([]);
+
+  // Section 2: product daily (selected date)
+  const dp = DPL[curDate]||{};
+  rows.push([`=== Loan Product รายวัน (${curDate}) ===`]); // แก้ตรงนี้ให้เป็น {curDate}
+  rows.push(['Product','สัญญาใหม่','มูลค่าใหม่ (USD)']);
+  ALL_PRODS.forEach(p=>{
+    const d=dp[p]||{nc:0,nd:0};
+    if(d.nc||d.nd) rows.push([p,d.nc,d.nd]);
+  });
+  rows.push([]);
+
+  // Section 3: product monthly (selected month)
+  const mp = MPL[curMonth]||{};
+  rows.push([`=== Loan Product รายเดือน (${curMonth}) ===`]); // แก้ตรงนี้ให้เป็น {curMonth}
+  rows.push(['Product','สัญญาปิด','มูลค่าปิด (USD)']);
+  ALL_PRODS.forEach(p=>{
+    const d=mp[p]||{cc:0,cd:0};
+    if(d.cc||d.cd) rows.push([p,d.cc,d.cd]);
+  });
+
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const bom  = '\uFEFF'; // UTF-8 BOM for Excel Thai
+  const blob = new Blob([bom+csv],{type:'text/csv;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `loan_report_${curDate||'all'}.csv`; // แก้ตรงนี้ให้เป็น {curDate}
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+// ── init ──────────────────────────────────────────────────
 window.onload = () => {
-  todayPieChart = new Chart(document.getElementById('todayPie'), {
-    type: 'doughnut',
-    data: { labels:['ใหม่','ปิด'], datasets:[{data:[0,0], backgroundColor:['#3b82f6','#16a34a']}] },
-    options: { maintainAspectRatio:false, cutout:'70%' }
+  const doOpts = cut => ({
+    maintainAspectRatio:false, cutout:cut,
+    plugins:{ legend:{ position:'bottom', labels:{ font:{size:10}, boxWidth:10, padding:4 } } }
   });
 
-  monthPieChart = new Chart(document.getElementById('monthPie'), {
-    type: 'doughnut',
-    data: { labels:['ใหม่','ปิด'], datasets:[{data:[0,0], backgroundColor:['#7c3aed','#f59e0b']}] },
-    options: { maintainAspectRatio:false, cutout:'70%' }
+  todayChart = new Chart(document.getElementById('todayPie'),{
+    type:'doughnut',
+    data:{ labels:['ใหม่','ปิด'], datasets:[{data:[0,0],backgroundColor:['#3b82f6','#16a34a']}] },
+    options:doOpts('70%')
+  });
+  monthChart = new Chart(document.getElementById('monthPie'),{
+    type:'doughnut',
+    data:{ labels:['ใหม่','ปิด'], datasets:[{data:[0,0],backgroundColor:['#7c3aed','#f59e0b']}] },
+    options:doOpts('70%')
+  });
+  newChart = new Chart(document.getElementById('prodNewPie'),{
+    type:'doughnut',
+    data:{ labels:[], datasets:[{data:[],backgroundColor:[]}] },
+    options:doOpts('55%')
+  });
+  clsChart = new Chart(document.getElementById('prodClsPie'),{
+    type:'doughnut',
+    data:{ labels:[], datasets:[{data:[],backgroundColor:[]}] },
+    options:doOpts('55%')
   });
 
-  updateDayCard(document.getElementById('dateFilter').value);
-  updateMonthCard(document.getElementById('monthFilter').value);
+  onDateChange(document.getElementById('dateFilter').value);
+  onMonthChange(document.getElementById('monthFilter').value);
 
-  new Chart(document.getElementById('dCnt'), {
-    type: 'bar',
-    data: {
-      labels: ["2026-04-02", "2026-04-03", "2026-04-04", "2026-04-05", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-09", "2026-04-10", "2026-04-11", "2026-04-14", "2026-04-15", "2026-04-17", "2026-04-18", "2026-04-19", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "2026-05-02", "2026-05-03", "2026-05-04"],
-      datasets: [
-        { label:'ใหม่', data:[3.0, 7.0, 0.0, 0.0, 16.0, 11.0, 4.0, 4.0, 8.0, 0.0, 0.0, 0.0, 16.0, 0.0, 0.0, 13.0, 10.0, 5.0, 6.0, 6.0, 0.0, 0.0, 9.0, 4.0, 6.0, 10.0, 0.0, 0.0, 0.0, 13.0], backgroundColor:'#3b82f6' },
-        { label:'ปิด',  data:[8.0, 10.0, 11.0, 7.0, 7.0, 9.0, 10.0, 12.0, 26.0, 3.0, 2.0, 12.0, 6.0, 3.0, 6.0, 21.0, 14.0, 7.0, 7.0, 36.0, 3.0, 4.0, 9.0, 11.0, 6.0, 11.0, 9.0, 5.0, 1.0, 0.0], backgroundColor:'#16a34a' }
+  new Chart(document.getElementById('dBar'),{
+    type:'bar',
+    data:{
+      labels:["2026-04-02", "2026-04-03", "2026-04-04", "2026-04-05", "2026-04-06", "2026-04-07", "2026-04-08", "2026-04-09", "2026-04-10", "2026-04-11", "2026-04-14", "2026-04-15", "2026-04-17", "2026-04-18", "2026-04-19", "2026-04-20", "2026-04-21", "2026-04-22", "2026-04-23", "2026-04-24", "2026-04-25", "2026-04-26", "2026-04-27", "2026-04-28", "2026-04-29", "2026-04-30", "2026-05-01", "2026-05-02", "2026-05-03", "2026-05-04"],
+      datasets:[
+        {label:'ใหม่',data:[3.0, 7.0, 0.0, 0.0, 16.0, 11.0, 4.0, 4.0, 8.0, 0.0, 0.0, 0.0, 16.0, 0.0, 0.0, 13.0, 10.0, 5.0, 6.0, 6.0, 0.0, 0.0, 9.0, 4.0, 6.0, 10.0, 0.0, 0.0, 0.0, 13.0],backgroundColor:'#3b82f6'},
+        {label:'ปิด', data:[8.0, 10.0, 11.0, 7.0, 7.0, 9.0, 10.0, 12.0, 26.0, 3.0, 2.0, 12.0, 6.0, 3.0, 6.0, 21.0, 14.0, 7.0, 7.0, 36.0, 3.0, 4.0, 9.0, 11.0, 6.0, 11.0, 9.0, 5.0, 1.0, 0.0],backgroundColor:'#16a34a'}
       ]
     },
-    options: { maintainAspectRatio:false }
+    options:{maintainAspectRatio:false}
   });
 };
 </script>
