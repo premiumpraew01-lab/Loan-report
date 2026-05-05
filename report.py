@@ -241,8 +241,8 @@ select{{font-size:12px;padding:3px 6px;border-radius:6px;border:1px solid #c7d2f
       <thead>
         <tr>
           <th>เดือน</th>
-          <th class="r">ใหม่ (จำนวน)</th><th class="r">ใหม่ (เม็ดเงิน)</th>
-          <th class="r">ปิด (จำนวน)</th><th class="r">ปิด (เม็ดเงิน)</th>
+          <th class="r">สัญญาใหม่ (จำนวน)</th><th class="r">)มูลค่า (USD)</th>
+          <th class="r">สัญญาปิด (จำนวน)</th><th class="r">มูลค่า (USD)</th>
           <th class="r">Net</th>
         </tr>
       </thead>
