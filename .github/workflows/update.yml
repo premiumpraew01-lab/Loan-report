@@ -9,6 +9,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -19,15 +23,14 @@ jobs:
         python-version: '3.9'
 
     - name: Install dependencies
-      run: |
-        pip install pandas
+      run: pip install pandas
 
     - name: Run Report Generator
-      run: |
-        python report.py
+      run: python report.py
 
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         folder: .
         branch: gh-pages
+        token: ${{ secrets.GITHUB_TOKEN }}
