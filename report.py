@@ -1,5 +1,5 @@
 """
-Loan Portfolio Summary Report Generator (v3 - trimmed)
+Loan Portfolio Summary Report Generator (v4 - with download)
 ===============================================
 วิธีใช้งาน:
   1. วางไฟล์ CSV ทั้ง 2 ในโฟลเดอร์เดียวกับ script นี้
@@ -127,13 +127,13 @@ def render_html(lc, cl, daily, monthly):
         else:
             daily_lookup[ds] = {"new_cnt": 0, "cls_cnt": 0, "new_dis": 0.0, "cls_dis": 0.0}
 
-    monthly_lookup = {
-        str(r["YM"]): {
+    monthly_lookup = {{
+        str(r["YM"]): {{
             "new_cnt": int(r["new_count"]), "cls_cnt": int(r["closed_count"]),
             "new_dis": float(r["new_disbursed"]), "cls_dis": float(r["closed_disbursed"]),
             "net": int(r["net"])
-        } for _, r in monthly.iterrows()
-    }
+        }} for _, r in monthly.iterrows()
+    }}
 
     dropdown_options = "".join([
         f'<option value="{str(d)}">{d.strftime("%d/%m/%Y")}</option>'
@@ -173,12 +173,22 @@ td{{padding:6px 10px;border-bottom:1px solid #f1f5f9}}
 td.r{{text-align:right}}
 .tscroll{{max-height:340px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:8px}}
 select{{font-size:12px;padding:3px 6px;border-radius:6px;border:1px solid #c7d2fe}}
+.dl-btn{{
+  background:#fff;color:#1e3a8a;border:none;border-radius:8px;
+  padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+  transition:background .15s;
+}}
+.dl-btn:hover{{background:#dbeafe}}
 </style>
 </head>
 <body>
 <div class="topbar">
   <div><h1>📊 Loan Portfolio Dashboard</h1><p>สร้างเมื่อ {now}</p></div>
-  <div style="text-align:right">Active: <b>{active_loans:,}</b> | Closed: <b>{closed_loans:,}</b></div>
+  <div style="display:flex;align-items:center;gap:1.2rem">
+    <div style="text-align:right">Active: <b>{active_loans:,}</b> | Closed: <b>{closed_loans:,}</b></div>
+    <button class="dl-btn" onclick="downloadReport()">⬇️ Download Report</button>
+  </div>
 </div>
 <div class="page">
 
@@ -241,8 +251,8 @@ select{{font-size:12px;padding:3px 6px;border-radius:6px;border:1px solid #c7d2f
       <thead>
         <tr>
           <th>เดือน</th>
-          <th class="r">สัญญาใหม่ (จำนวน)</th><th class="r">)มูลค่า (USD)</th>
-          <th class="r">สัญญาปิด (จำนวน)</th><th class="r">มูลค่า (USD)</th>
+          <th class="r">สัญญาใหม่ (จำนวน)</th><th class="r"> มูลค่า (USD)</th>
+          <th class="r">สัญญาปิด (จำนวน)</th><th class="r"> มูลค่า (USD)</th>
           <th class="r">Net</th>
         </tr>
       </thead>
@@ -286,6 +296,20 @@ function updateMonthCard(ymKey) {{
   }}
 }}
 
+function downloadReport() {{
+  const html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {{ type: 'text/html;charset=utf-8' }});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = new Date().toISOString().slice(0, 10);
+  a.href     = url;
+  a.download = 'loan_report_' + date + '.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}}
+
 window.onload = () => {{
   todayPieChart = new Chart(document.getElementById('todayPie'), {{
     type: 'doughnut',
@@ -321,7 +345,7 @@ window.onload = () => {{
 def main():
     folder = os.path.dirname(os.path.abspath(__file__))
     print("="*55)
-    print(" Loan Portfolio Dashboard Generator v3 (trimmed)")
+    print(" Loan Portfolio Dashboard Generator v4 (with download)")
     print("="*55)
     lc, cl = load(folder)
     print("📊 วิเคราะห์...")
